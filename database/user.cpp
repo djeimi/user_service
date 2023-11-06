@@ -27,14 +27,14 @@ namespace database
             Poco::Data::Session session = database::Database::get().create_session();
             Statement create_stmt(session);
             create_stmt << "CREATE TABLE IF NOT EXISTS `user` ("
-                        << "`user_id` INT NOT NULL AUTO_INCREMENT,"
+                        << "`id` INT NOT NULL AUTO_INCREMENT,"
                         << "`first_name` VARCHAR(256) NOT NULL,"
                         << "`last_name` VARCHAR(256) NOT NULL,"
                         << "`login` VARCHAR(256) NOT NULL,"
                         << "`password` VARCHAR(256) NOT NULL,"
                         << "`email` VARCHAR(256) NULL,"
                         << "`phone` VARCHAR(15) NULL,"
-                        << "PRIMARY KEY (`user_id`),KEY `fn` (`first_name`),KEY `ln` (`last_name`));",
+                        << "PRIMARY KEY (`id`),KEY `fn` (`first_name`),KEY `ln` (`last_name`));",
                 now;
         }
 
@@ -55,7 +55,7 @@ namespace database
     {
         Poco::JSON::Object::Ptr root = new Poco::JSON::Object();
 
-        root->set("user_id", _id);
+        root->set("id", _id);
         root->set("first_name", _first_name);
         root->set("last_name", _last_name);
         root->set("email", _email);
@@ -91,7 +91,7 @@ namespace database
             Poco::Data::Session session = database::Database::get().create_session();
             Poco::Data::Statement select(session);
             long id;
-            select  << "SELECT `user_id`" 
+            select  << "SELECT `id`" 
                     << "FROM User where `login`=? and `password`=?",
                 into(id),
                 use(login),
@@ -121,9 +121,9 @@ namespace database
             Poco::Data::Session session = database::Database::get().create_session();
             Poco::Data::Statement select(session);
             User a;
-            select  << "SELECT `user_id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
+            select  << "SELECT `id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
                     << "FROM `user`" 
-                    << "WHERE `user_id`=?",
+                    << "WHERE `id`=?",
                 into(a._id),
                 into(a._first_name),
                 into(a._last_name),
@@ -160,7 +160,7 @@ namespace database
             Statement select(session);
             std::vector<User> result;
             User a;
-            select  << "SELECT `user_id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
+            select  << "SELECT `id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
                     << "FROM `user`",
                 into(a._id),
                 into(a._first_name),
@@ -202,7 +202,7 @@ namespace database
             User a;
             first_name += "%";
             last_name += "%";
-            select  << "SELECT `user_id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
+            select  << "SELECT `id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
                     << "FROM `user`" 
                     << "WHERE `first_name` LIKE ? AND `last_name` LIKE ?",
                 into(a._id),

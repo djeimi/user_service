@@ -42,22 +42,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /auth:
-    get:
-      summary: Проверка аутентификации
-      responses:
-        '200':
-          description: User ID
-          content:
-            application/json:
-              schema:
-               type: string
-        401:
-          description: Not authentication
-          content:
-            application/json:
-              schema:
-                type: string
   /user:
     get:
       summary: Чтение информации о пользователе
@@ -67,7 +51,7 @@ paths:
         in: query
         required: true
         schema:
-          $ref: '#/components/schemas/user_id'
+          $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Найденный пользователь
@@ -147,7 +131,7 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
-    user_id:
+    id:
       description: Уникальный идентификатор пользователя
       type: integer
     users:
@@ -166,7 +150,7 @@ components:
         - password
       properties:
         id:
-          $ref: '#/components/schemas/user_id'
+          $ref: '#/components/schemas/id'
         first_name:
           type: string
         last_name:
