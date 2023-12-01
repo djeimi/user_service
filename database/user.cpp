@@ -108,38 +108,6 @@ namespace database
         return user;
     }
 
-    std::optional<long> User::auth(std::string &login, std::string &password)
-    {
-        try
-        {
-            Poco::Data::Session session = database::Database::get().create_session();
-            Poco::Data::Statement select(session);
-            long id;
-            select << "SELECT `id`"
-                   << "FROM User where `login`=? and `password`=?",
-                into(id),
-                use(login),
-                use(password),
-                range(0, 1); //  iterate over result set one row at a time
-
-            select.execute();
-            Poco::Data::RecordSet rs(select);
-            if (rs.moveFirst())
-                return id;
-        }
-
-        catch (Poco::Data::MySQL::ConnectionException &e)
-        {
-            std::cout << "connection:" << e.what() << std::endl;
-        }
-        catch (Poco::Data::MySQL::StatementException &e)
-        {
-
-            std::cout << "statement:" << e.what() << std::endl;
-        }
-        return {};
-    }
-
     std::optional<User> User::read_by_id(long id)
     {
         try
