@@ -42,6 +42,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /all_users:
+    get:
+      summary: Получение списка всех пользователей
+      responses:
+        '200':
+          description: Array of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'
+        401:
+          description: Not authentication
+          content:
+            application/json:
+              schema:
+                type: string
   /user:
     get:
       summary: Чтение информации о пользователе

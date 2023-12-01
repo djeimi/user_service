@@ -17,10 +17,13 @@ namespace database
             std::string _phone;
             std::string _login;
             std::string _password;
+            static inline long _last_id;
 
         public:
 
             static User fromJSON(const std::string & str);
+
+            static const long &get_last_id();
 
             long             get_id() const;
             const std::string &get_first_name() const;
@@ -40,10 +43,9 @@ namespace database
 
             static void init();
             static std::optional<User> read_by_id(long id);
-            static std::optional<long> auth(std::string &login, std::string &password);
             static std::vector<User> read_all();
             static std::vector<User> search(std::string first_name,std::string last_name);
-            void save_to_mysql();
+            bool save_to_mysql();
 
             Poco::JSON::Object::Ptr toJSON() const;
 

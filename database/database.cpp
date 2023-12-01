@@ -19,6 +19,29 @@ namespace database{
         _pool = std::make_unique<Poco::Data::SessionPool>(Poco::Data::MySQL::Connector::KEY, _connection_string);
     }
 
+    size_t Database::_n_shards = Config::get().get_n_shards();
+
+    size_t Database::get_max_shard(){
+        return _n_shards;
+    }
+
+    std::vector<std::string> Database::get_all_hints(){
+        std::vector<std::string> result;
+        for(size_t i = 0; i < _n_shards; ++i){
+            std::string shard_name = "-- sharding:";
+            shard_name += std::to_string(i);
+            result.push_back(shard_name);
+        }
+        return result;
+    }
+
+    std::string Database::sharding_user(long id){
+        size_t shard_number = std::hash<size_t>{}(id)%get_max_shard();
+        std::string result = "-- sharding:";
+        result += std::to_string(shard_number);
+        return result;
+    }
+
     Database& Database::get(){
         static Database _instance;
         return _instance;
