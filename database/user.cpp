@@ -165,7 +165,8 @@ namespace database
             std::vector<User> result;
             User a;
             select  << "SELECT `id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
-                    << "FROM `user`",
+                    << "FROM `user`"
+                    << hint,
                 into(a._id),
                 into(a._first_name),
                 into(a._last_name),
