@@ -157,46 +157,53 @@ namespace database
         for (const std::string &hint : hints)
         {
             auto handle = std::async(std::launch::async, [hint]() -> std::vector<User>
-                                     {
-            try
             {
-                                            Poco::Data::Session session = database::Database::get().create_session();
-            Statement select(session);
-            std::vector<User> result;
-            User a;
-            select  << "SELECT `id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
-                    << "FROM `user`"
-                    << hint,
-                into(a._id),
-                into(a._first_name),
-                into(a._last_name),
-                into(a._email),
-                into(a._phone),
-                into(a._login),
-                into(a._password),
-                range(0, 1); //  iterate over result set one row at a time
+                try
+                {
+                    Poco::Data::Session session = database::Database::get().create_session();
+                    Statement select(session);
+                    std::vector<User> result;
+                    User a;
 
-            while (!select.done())
-            {
-                if (select.execute())
-                    result.push_back(a);
-            }
-            return result;
-        }
+                    std::cout << "0" << std::endl;
+                    
+                    select  << "SELECT `id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
+                            << "FROM `user`"
+                            << hint,
+                        into(a._id),
+                        into(a._first_name),
+                        into(a._last_name),
+                        into(a._email),
+                        into(a._phone),
+                        into(a._login),
+                        into(a._password),
+                        range(0, 1); //  iterate over result set one row at a time
 
-        catch (Poco::Data::MySQL::ConnectionException &e)
-        {
-            std::cout << "connection:" << e.displayText() << std::endl;
-            throw;
-        }
-        catch (Poco::Data::MySQL::StatementException &e)
-        {
+                    while (!select.done())
+                    {
+                        std::cout << "1" << std::endl;
+                        if (select.execute())
+                            result.push_back(a);
+                    }
 
-            std::cout << "statement:" << e.displayText() << std::endl;
-            throw;
-        }
+                    std::cout << "2" << std::endl;
+                    return result;
+                }
+                    
+                catch (Poco::Data::MySQL::ConnectionException &e)
+                {
+                    std::cout << "connection:" << e.displayText() << std::endl;
+                    throw;
+                }
+                catch (Poco::Data::MySQL::StatementException &e)
+                {
+
+                    std::cout << "statement:" << e.displayText() << std::endl;
+                    throw;
+                }
                                          
-                                        return std::vector<User>(); });
+                return std::vector<User>(); 
+            });
 
             futures.emplace_back(std::move(handle));
         }
