@@ -175,7 +175,6 @@ public:
             }
             else if (hasSubstr(request.getURI(), "/all_users"))
             {
-
                 auto results = database::User::read_all();
                 if(!results.empty())
                 {
@@ -194,12 +193,10 @@ public:
                 {
                     notFoundError(response, request.getURI(), "Users not found");
                     return;
-                }
-                
+                }  
             }
             else if (hasSubstr(request.getURI(), "/search"))
             {
-
                 std::string fn = "";
                 std::string ln = "";
                 if(form.has("first_name"))  fn = form.get("first_name");
