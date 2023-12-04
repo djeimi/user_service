@@ -150,22 +150,26 @@ namespace database
 
     std::vector<User> User::read_all()
     {
+        std::cerr << "-3" << std::endl;
         std::vector<User> result;
         std::vector<std::string> hints = database::Database::get_all_hints();
         std::vector<std::future<std::vector<User>>> futures;
 
         for (const std::string &hint : hints)
         {
+            std::cerr << "-2" << std::endl;
             auto handle = std::async(std::launch::async, [hint]() -> std::vector<User>
             {
                 try
                 {
+                    std::cerr << "-1" << std::endl;
+
                     Poco::Data::Session session = database::Database::get().create_session();
                     Statement select(session);
                     std::vector<User> result;
                     User a;
 
-                    std::cout << "0" << std::endl;
+                    std::cerr << "0" << std::endl;
                     
                     select  << "SELECT `id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`" 
                             << "FROM `user`"
@@ -181,12 +185,12 @@ namespace database
 
                     while (!select.done())
                     {
-                        std::cout << "1" << std::endl;
+                        std::cerr << "1" << std::endl;
                         if (select.execute())
                             result.push_back(a);
                     }
 
-                    std::cout << "2" << std::endl;
+                    std::cerr << "2" << std::endl;
                     return result;
                 }
                     

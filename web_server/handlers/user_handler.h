@@ -64,6 +64,21 @@ static bool hasSubstr(const std::string &str, const std::string &substr)
 class UserHandler : public HTTPRequestHandler
 {
 private:
+    void notFoundError(HTTPServerResponse &response, std::string instance, std::string message)
+    {
+        response.setStatus(Poco::Net::HTTPResponse::HTTP_NOT_FOUND);
+        response.setChunkedTransferEncoding(true);
+        response.setContentType("application/json");
+        Poco::JSON::Object::Ptr root = new Poco::JSON::Object();
+        root->set("type", "/errors/not_found");
+        root->set("title", "Internal exception");
+        root->set("status", "404");
+        root->set("detail", message);
+        root->set("instance", instance);
+        std::ostream &ostr = response.send();
+        Poco::JSON::Stringifier::stringify(root, ostr);
+    }
+
     bool check_name(const std::string &name, std::string &reason)
     {
         if (name.length() < 3)
@@ -157,6 +172,30 @@ public:
                     Poco::JSON::Stringifier::stringify(root, ostr);
                     return;
                 }
+            }
+            else if (hasSubstr(request.getURI(), "/all_users"))
+            {
+
+                auto results = database::User::read_all();
+                if(!results.empty())
+                {
+                    Poco::JSON::Array arr;
+                    for (auto s : results)
+                        arr.add(remove_password(s.toJSON()));
+                    response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
+                    response.setChunkedTransferEncoding(true);
+                    response.setContentType("application/json");
+                    std::ostream &ostr = response.send();
+                    Poco::JSON::Stringifier::stringify(arr, ostr);
+
+                    return;
+                }
+                else
+                {
+                    notFoundError(response, request.getURI(), "Users not found");
+                    return;
+                }
+                
             }
             else if (hasSubstr(request.getURI(), "/search"))
             {
