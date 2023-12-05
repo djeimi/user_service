@@ -19,7 +19,7 @@ namespace database{
         _pool = std::make_unique<Poco::Data::SessionPool>(Poco::Data::MySQL::Connector::KEY, _connection_string);
     }
 
-    size_t Database::_shards = Config::get().get_n_shards();
+    size_t Database::_shards = Config::get().get_shards();
 
     size_t Database::get_max_shard(){
         return _shards;
