@@ -238,7 +238,8 @@ namespace database
                     auto ln = last_name + "%";
                     select << "SELECT `id`, `first_name`, `last_name`, `email`, `phone`, `login`, `password`"
                         << "FROM `user`"
-                        << "WHERE `first_name` LIKE ? AND `last_name` LIKE ?",
+                        << "WHERE `first_name` LIKE ? AND `last_name` LIKE ?"
+                        << hint,
                         into(a._id),
                         into(a._first_name),
                         into(a._last_name),
