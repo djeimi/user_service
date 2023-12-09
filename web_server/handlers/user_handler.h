@@ -147,7 +147,11 @@ public:
             {
                 long id = atol(form.get("id").c_str());
 
-                std::optional<database::User> result = database::User::read_by_id(id);
+                bool cache = true;
+                if (form.has("no_cache")) cache = false;
+
+                std::optional<database::User> result = database::User::read_by_id(id, cache);
+                
                 if (result)
                 {
                     response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
@@ -226,34 +230,37 @@ public:
                     user.login() = form.get("login");
                     user.password() = form.get("password");
 
-                    bool check_result = true;
+                    bool check_result_fn = true;
+                    bool check_result_ln = true;
+                    bool check_result_email = true;
                     std::string message;
                     std::string reason;
 
                     if (!check_name(user.get_first_name(), reason))
                     {
-                        check_result = false;
+                        check_result_fn = false;
                         message += reason;
                         message += "<br>";
                     }
 
                     if (!check_name(user.get_last_name(), reason))
                     {
-                        check_result = false;
+                        check_result_ln = false;
                         message += reason;
                         message += "<br>";
                     }
 
                     if (!check_email(user.get_email(), reason))
                     {
-                        check_result = false;
+                        check_result_email = false;
                         message += reason;
                         message += "<br>";
                     }
 
-                    if (check_result)
+                    if (check_result_fn && check_result_ln && check_result_email)
                     {
                         user.save_to_mysql();
+                        user.save_to_cache();
                         response.setStatus(Poco::Net::HTTPResponse::HTTP_OK);
                         response.setChunkedTransferEncoding(true);
                         response.setContentType("application/json");

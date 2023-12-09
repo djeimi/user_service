@@ -1,6 +1,7 @@
 #include "user.h"
 #include "database.h"
 #include "../config/config.h"
+#include "../database/cache.h"
 
 #include <Poco/Data/MySQL/Connector.h>
 #include <Poco/Data/MySQL/MySQLException.h>
@@ -75,6 +76,29 @@ namespace database
         }
     }
 
+    std::optional<User> User::read_from_cache_by_id(long id)
+    {
+        try
+        {
+            std::string result;
+            if (Cache::get().get(id, result)) return fromJSON(result);
+            else
+                return {};
+        }
+        catch (std::exception& err)
+        {
+            return {};
+        }
+    }
+
+    void User::save_to_cache()
+    {
+        std::stringstream ss;
+        Poco::JSON::Stringifier::stringify(toJSON(), ss);
+        std::string message = ss.str();
+        Cache::get().put(_id, message);
+    }
+    
     Poco::JSON::Object::Ptr User::toJSON() const
     {
         Poco::JSON::Object::Ptr root = new Poco::JSON::Object();
@@ -108,10 +132,19 @@ namespace database
         return user;
     }
 
-    std::optional<User> User::read_by_id(long id)
+    std::optional<User> User::read_by_id(long id, bool cache)
     {
         try
         {
+            std::optional<database::User> additional;
+
+            if(cache)
+            {
+                additional = read_from_cache_by_id(id);
+                if(additional.has_value()) return additional.value();
+
+            }
+
             Poco::Data::Session session = database::Database::get().create_session();
             Poco::Data::Statement select(session);
             User a;
@@ -132,8 +165,11 @@ namespace database
 
             select.execute();
             Poco::Data::RecordSet rs(select);
-            if (rs.moveFirst())
+            if (rs.moveFirst()) 
+            {
+                if(cache) a.save_to_cache();
                 return a;
+            }
         }
 
         catch (Poco::Data::MySQL::ConnectionException &e)

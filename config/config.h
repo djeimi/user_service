@@ -11,6 +11,7 @@ class  Config{
         std::string _login;
         std::string _password;
         std::string _database;
+        std::string _cache_server;
         size_t _shards;
 
     public:
@@ -21,6 +22,7 @@ class  Config{
         std::string& login();
         std::string& password();
         std::string& database();
+        std::string& cache_servers();
         size_t& shards();
 
         const std::string& get_port() const ;
@@ -28,6 +30,7 @@ class  Config{
         const std::string& get_login() const ;
         const std::string& get_password() const ;
         const std::string& get_database() const ;
+        const std::string& get_cache_server() const ;
         const size_t& get_shards() const ;
 };
 

@@ -4,6 +4,10 @@ project(hl_server C CXX)
 
 SET (EXAMPLE_BINARY "user_service")
 
+set (STD_CXX "c++17")
+set (REDISCPP_FLAGS "-DREDISCPP_HEADER_ONLY=ON")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -std=${STD_CXX} ${REDISCPP_FLAGS}")
+
 find_package(OpenSSL)
 find_package(Threads)
 find_package(ZLIB)
@@ -24,6 +28,7 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(${EXAMPLE_BINARY} main.cpp 
                                  config/config.cpp 
+                                 database/cache.cpp
                                  database/database.cpp
                                  database/user.cpp)
 

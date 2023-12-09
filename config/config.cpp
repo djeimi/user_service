@@ -8,6 +8,7 @@ Config::Config()
         _password = std::getenv("DB_PASSWORD");
         _database = std::getenv("DB_DATABASE");
         _shards = atoi(std::getenv("SHARDS_COUNT"));
+        _cache_server = std::getenv("CACHE");
 }
 
 Config &Config::get()
