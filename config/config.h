@@ -22,7 +22,7 @@ class  Config{
         std::string& login();
         std::string& password();
         std::string& database();
-        std::string& cache_servers();
+        std::string& cache_server();
         size_t& shards();
 
         const std::string& get_port() const ;

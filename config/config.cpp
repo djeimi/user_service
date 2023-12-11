@@ -47,6 +47,11 @@ const size_t  &Config::get_shards() const
     return _shards;
 }
 
+const std::string &Config::get_cache_server() const
+{
+    return _cache_server;
+}
+
 std::string &Config::port()
 {
     return _port;
@@ -75,4 +80,9 @@ std::string &Config::database()
 size_t &Config::shards()
 {
     return _shards;
+}
+
+std::string &Config::cache_server()
+{
+    return _cache_server;
 }
